@@ -5,17 +5,18 @@ Created on Fri Feb 28 16:54:55 2025
 
 @author: Lara HIJAZI
 """
-globals().clear()
+### cleaning in spyder
 get_ipython().magic('reset -f')
 get_ipython().magic('clear')
-
+###
+globals().clear()
 import numpy as np
 import matplotlib.pyplot as plt
 import ICRF_parameters as ICp
 plt.close('all')     #close all figures
 
 # Constants
-#RB0 = 2.5;     #position of axis [m]
+RB0 = 2.8;     #position of axis [m]
 R0 = 2.5;      #major radius [m]
 a  = 0.5;      #minor radius [m]
 
@@ -29,9 +30,11 @@ R = np.linspace(R0-a, R0+a, 200)
 if not np.isclose(R, R0).any():
     R = np.sort(np.append(R, R0))
     indices = np.where(R == R0)[0]
-if 'RB0' in globals() and RB0 != R0 and not np.isclose(R, RB0).any():
-    R = np.sort(np.append(R, RB0))
-    indices = np.where(R == RB0)[0]
+    
+RB0_value = globals().get('RB0', None)
+if RB0_value is not None and RB0_value != R0 and not np.isclose(R, RB0_value).any():
+    R = np.sort(np.append(R, RB0_value))
+    indices = np.where(R == RB0_value)[0]
     
     
 # Define the resonance frequency function
@@ -69,9 +72,9 @@ plt.plot(R, f_Li, label="$^7$Li")
 
 
 YL = plt.ylim()
-if 'RB0' in globals():
-    plt.plot([RB0, RB0],[YL[0], YL[1]],'k--' ,label="Magnetic Axis")
-    outline = f'At magnetic axis = {RB0} [m],'
+if RB0_value is not None:
+    plt.plot([RB0_value, RB0_value],[YL[0], YL[1]],'k--' ,label="Magnetic Axis")
+    outline = f'At magnetic axis = {RB0_value} [m],'
 else:
     plt.plot([R0, R0],[YL[0], YL[1]],'k--' ,label="Major Radius")
     outline = f'At major radius = {R0} [m],'
