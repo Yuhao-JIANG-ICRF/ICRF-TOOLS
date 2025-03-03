@@ -1,5 +1,7 @@
 # ICRF-TOOLS
 Several simple code for ICRF
+# ICRF_parameters
+This file contains several important constants that are widely used in the code. Please download it before using other codes.
 # Res_Freq ---Author: Lara Hijazi
 This tool calculates the ICRF resonance frequency as a function of the plasma’s radial position, providing both graphical outputs and precise frequency values at the Rajor radius and magnetic axis. Based on following equations:
 <p align="center">
