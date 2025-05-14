@@ -1,12 +1,14 @@
 # ICRF-TOOLS
 Several simple code for ICRF
 # ICRF_parameters
-This file contains several important constants that are widely used in the code. Please download it before using other codes. It contains:
-c = 299792458           # light speed [m/s]
-e0 = 8.854187817e-12    #Vacuum Permittivity [F/m]
-u0 = 4*np.pi*1e-7       #permeability of vacuum [H/m]
-q0 = 1.60217733e-19;    #elementary positive charge [C]
-m0 = 1.6726231e-27;     #Atomic mass unit [kg]
+This file contains several important constants that are widely used in the code. Please download it before using other codes. It contains:  
+```python
+c  = 299792458          #Light speed [m/s]  
+e0 = 8.854187817e-12    #Vacuum Permittivity [F/m]  
+u0 = 4*np.pi*1e-7     #Permeability of vacuum [H/m]  
+q0 = 1.60217733e-19;    #Elementary positive charge [C]  
+m0 = 1.6726231e-27;     #Atomic mass unit [kg]  
+
 # Res_Freq ---Author: Lara Hijazi
 This tool calculates the ICRF resonance frequency as a function of the plasma’s radial position, providing both graphical outputs and precise frequency values at the Rajor radius and magnetic axis. Based on following equations:
 <p align="center">
@@ -26,3 +28,5 @@ By input the parameters major radius (position of axis), minor radius, magnetic 
 <p align="center">
 <img src="images/Res_Freq_ex2.png" alt="示例图片" width="600">
 </p>
+
+# Smith Chart
