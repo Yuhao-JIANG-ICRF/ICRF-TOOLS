@@ -13,16 +13,31 @@ globals().clear()
 import numpy as np
 import matplotlib.pyplot as plt
 import ICRF_parameters as ICp
+
 plt.close('all')     #close all figures
 
 # Constants
-RB0 = 2.8;     #position of axis [m]
-R0 = 2.5;      #major radius [m]
-a  = 0.5;      #minor radius [m]
 
-B0 = 3.657;     #magnetic field [T]
+# =============================================================================
+# #west
+# RB0 = 2.5;     #position of axis [m]
+# R0 = 2.5;      #major radius [m]
+# a  = 0.5;      #minor radius [m]
+# B0 = 3.657;     #magnetic field [T]
+# =============================================================================
 
-N = 2        # Harmonic number
+# jet
+RB0 = 2.96;     #position of axis [m]
+R0 = 2.96;      #major radius [m]
+a  = 0.96;      #minor radius [m]
+B0 = 3.7;#3.7&3.4     #magnetic field [T]
+# CFEDR
+RB0 = 8.25;     #position of axis [m]
+R0 = 7.8;      #major radius [m]
+a  = 2.5;      #minor radius [m]
+B0 = 6.3;#3.7&3.4     #magnetic field [T]
+
+N = 1        # Harmonic number
 
 
 # Define range of R values (from R0-a to R0+a) 
