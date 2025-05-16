@@ -11,6 +11,11 @@ m0 = 1.6726231e-27;     #Atomic mass unit [kg]
 
 # Res_Freq ---Author: Lara Hijazi
 This tool calculates the ICRF resonance frequency as a function of the plasma’s radial position, providing both graphical outputs and precise frequency values at the Rajor radius and magnetic axis. Based on following equations:
+
+$$
+B(R) = \frac{B_0\,R_0}{R}
+$$
+
 <p align="center">
   <img src="https://latex.codecogs.com/png.latex?B(R)%20=%20\frac{B_0*R_0}{R}" alt="公式">
 </p>
