@@ -1,97 +1,105 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Feb 27 09:40:00 2025
-
-@author: YJ281217
-"""
-
 import numpy as np
 
 def fun_load_touchstone(fname):
     """
-    Load the scattering parameters of a touchstone file
-    with module in natural units and argument in degrees.
-    It can handle up to 9 ports and 1e5 frequency points.
-    
+    Load the scattering parameters from a Touchstone file (.sNp)
+    Supports up to 9 ports and 1e5 frequency points. Handles S-parameter formats:
+      MA (magnitude/angle), DB (dB/angle), RI (real/imag).
+
+    Automatically detects frequency unit and converts to Hz.
+
     Parameters:
       fname : str
-          Name of the touchstone file. Assumes that the second last
-          character of the file name indicates the number of ports.
-    
-    Returns:
-      f : numpy.ndarray
-          1D array of frequency points (in Hz, after applying unit scaling).
-      S : list of numpy.ndarray
-          List of scattering matrices. Each matrix is of shape (nports, nports).
-    """
+          Path to the .sNp file. The penultimate character indicates number of ports.
 
+    Returns:
+      f : np.ndarray
+          1D array of frequencies in Hz.
+      S : list of np.ndarray
+          List of S-matrices (nports x nports complex) per frequency point.
+    """
+    # Determine port count from filename, e.g. 'file.4p' -> 4 ports
     try:
         nports = int(fname[-2])
-    except Exception as e:
-        raise ValueError("Cannot determine number of ports from filename.") from e
+    except Exception:
+        raise ValueError("Cannot determine number of ports from filename (expect penultimate digit before 'p').")
 
-    nelements = 2 * nports * nports  
+    nelements = 2 * nports * nports
 
     with open(fname, 'r') as f:
-        header_line = None
+        # Find header line starting with '#'
+        header = None
         for line in f:
+            line = line.strip()
             if line.startswith('#'):
-                header_line = line.strip()
+                header = line.lstrip('#').strip()
                 break
-        if header_line is None:
-            raise ValueError("No header line (starting with '#') found in file.")
+        if header is None:
+            raise ValueError("No header line (starting with '#') found.")
 
-        
-        trimmed = header_line[1:].lstrip()
-        if not trimmed:
-            raise ValueError("Header line is empty after '#'.")
+        # Tokenize header: e.g. ['MHz', 'S', 'MA', 'R', '50'] or ['Hz','S','RI','R','46.7']
+        parts = header.split()
+        if len(parts) < 3 or parts[1].upper() != 'S':
+            raise ValueError(f"Unexpected header format: '{header}'")
 
-        
-        unit_letter = trimmed[0]
-        unit_mapping = {'H': 1, 'k': 1e3, 'M': 1e6, 'G': 1e9, 'T': 1e12}
-        if unit_letter in unit_mapping:
-            unit = unit_mapping[unit_letter]
-        else:
-            raise ValueError("Error: wrong unit.")
+        # Frequency unit, accept full strings like 'Hz','kHz','MHz', etc.
+        unit_key = parts[0].upper()
+        unit_map = {
+            'HZ': 1,
+            'KHZ': 1e3,
+            'MHZ': 1e6,
+            'GHZ': 1e9,
+            'THZ': 1e12,
+        }
+        if unit_key not in unit_map:
+            raise ValueError(f"Unknown frequency unit '{parts[0]}' in header.")
+        unit = unit_map[unit_key]
 
-        
-        if len(trimmed) < 8 or trimmed[4:8] != "S MA":
-            raise ValueError("Error: wrong format.")
+        # S-format: MA, DB, or RI
+        s_format = parts[2].upper()
+        if s_format not in ('MA', 'DB', 'RI'):
+            raise ValueError(f"Unsupported S-parameter format '{parts[2]}'. Use MA, DB, or RI.")
 
-        
+        # Skip to data: skip lines starting with '!', '#' beyond header
         data_lines = []
         for line in f:
             line = line.strip()
-            if line.startswith('!') or line.startswith('#') or not line:
+            if not line or line.startswith('!') or line.startswith('#'):
                 continue
             data_lines.append(line)
 
-    
-    data_str = " ".join(data_lines)
-    data = np.fromstring(data_str, sep=' ')
+    # Parse numeric data
+    data = np.fromstring(' '.join(data_lines), sep=' ')
     if data.size == 0:
         raise ValueError("No numeric data found in file.")
 
-    
     chunk_size = 1 + nelements
-    num_chunks = int(data.size // chunk_size)
-    freq_points = []
-    S_matrices = []
+    num_points = int(data.size // chunk_size)
+    freqs = np.zeros(num_points)
+    S_mats = []
 
-    for i in range(num_chunks):
-        chunk = data[i*chunk_size : (i+1)*chunk_size]
+    for idx in range(num_points):
+        chunk = data[idx*chunk_size:(idx+1)*chunk_size]
+        # Convert frequency to Hz
+        freqs[idx] = chunk[0] * unit
+        vals = chunk[1:]
+        # Extract complex values based on format
+        if s_format == 'MA':
+            mags = vals[0::2]
+            angs = np.deg2rad(vals[1::2])
+            comps = mags * np.exp(1j * angs)
+        elif s_format == 'DB':
+            dbs = vals[0::2]
+            mags = 10**(dbs/20)
+            angs = np.deg2rad(vals[1::2])
+            comps = mags * np.exp(1j * angs)
+        else:  # RI
+            real = vals[0::2]
+            imag = vals[1::2]
+            comps = real + 1j * imag
 
-        freq = chunk[0] * unit
-        freq_points.append(freq)
-        
-   
-        amplitudes = chunk[1::2]
-        arguments = chunk[2::2]
+        # Reshape and transpose to nports x nports
+        S_mat = comps.reshape(nports, nports).T
+        S_mats.append(S_mat)
 
-        Xtmp = amplitudes * np.exp(1j * np.deg2rad(arguments))
-
-        S_matrix = np.reshape(Xtmp, (nports, nports)).T
-        S_matrices.append(S_matrix)
-
-    return np.array(freq_points), S_matrices
+    return freqs, S_mats
