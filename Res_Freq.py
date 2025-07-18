@@ -12,7 +12,7 @@ get_ipython().magic('clear')
 globals().clear()
 import numpy as np
 import matplotlib.pyplot as plt
-import ICRF_parameters as ICp
+from ICRF_parameters import Const
 
 plt.close('all')     #close all figures
 
@@ -37,8 +37,7 @@ R0 = 7.8;      #major radius [m]
 a  = 2.5;      #minor radius [m]
 B0 = 6.3;#3.7&3.4     #magnetic field [T]
 
-N = 1        # Harmonic number
-
+N = 2        # Harmonic number
 
 # Define range of R values (from R0-a to R0+a) 
 R = np.linspace(R0-a, R0+a, 200)
@@ -54,7 +53,7 @@ if RB0_value is not None and RB0_value != R0 and not np.isclose(R, RB0_value).an
     
 # Define the resonance frequency function
 def resonance_frequency(Z, A):
-    return  N* 1/(2*np.pi*1e6) * (Z * ICp.q0)/(A * ICp.m0) * (B0*R0) / R# MHz
+    return  N* 1/(2*np.pi*1e6) * (Z * Const.q0)/(A * Const.m0) * (B0*R0) / R# MHz
 
 
 
