@@ -59,21 +59,70 @@ $$
 
 # smith_chart.py
 
+This program draws a Smith chart on the complex plane and places one or more S-parameters (complex reflection coefficient $\Gamma$) at their corresponding locations. It supports 1) points, 2) polylines, and 3) arrows to show how the locus evolves with frequency.
 
-<p align="center">
-<img src="smith_chart_ex1.png" alt="示例图片" width="400">
-</p>
-<p align="center">
-<img src="smith_chart_ex2.png" alt="示例图片" width="600">
-</p>
-<p align="center">
-<img src="smith_chart_ex3.png" alt="示例图片" width="600">
-</p>
+The chart is drawn in the $\Gamma$-plane (reflection-coefficient plane). Starting from the normalized impedance $z = Z/Z_0$, the relationship with the reflection coefficient is
+
+$$
+\Gamma = \frac{z-1}{z+1}, \qquad
+z = \frac{1+\Gamma}{1-\Gamma}.
+$$
+
+For S-parameters given by magnitude and phase, the complex form is
+
+$$
+S = |S|\,e^{j\theta},
+$$
+
+where $\theta$ may be in radians or degrees. If your Touchstone reader returns degrees, convert to radians before using trigonometric functions; this program expects complex $S$ directly.
+
+The resistance and reactance families on the Smith chart satisfy the following geometry.
+
+- **Constant resistance** $r=\text{const}$: center and radius in the Γ-plane
+- 
+  $$
+  x_c=\frac{r}{1+r}, \qquad R=\frac{1}{1+r},
+  $$
+  
+  with circle equation $(x-x_c)^2+y^2=R^2$.
+
+- **Constant reactance** $x=\text{const}$: center and radius
+- 
+  $$
+  x_c=1,\qquad y_c=\frac{1}{x},\qquad R=\frac{1}{|x|},
+  $$
+  
+  with circle equation $(x-1)^2+(y-y_c)^2=R^2$.
+
+The program draws these resistance and reactance families and clips them to the unit circle.
+
+## Code structure and core interface
+
+The core function is:
+```python
+smith_Smatrix(S, num=1, display_mode='points_and_arrows')
 
 
 
-
-
+<p align="center"><b>Smith chart display modes</b></p>
+<div align="center">
+  <table width="100%">
+    <tr>
+      <td align="center" width="33%">
+        <img src="images/smith_chart_ex1.png" alt="(a) Points + arrows" width="95%"><br>
+        <sub>(a) Points + arrows</sub>
+      </td>
+      <td align="center" width="33%">
+        <img src="images/smith_chart_ex2.png" alt="(b) Line with end arrow" width="95%"><br>
+        <sub>(b) Line with end arrow</sub>
+      </td>
+      <td align="center" width="33%">
+        <img src="images/smith_chart_ex3.png" alt="(c) Points only" width="95%"><br>
+        <sub>(c) Points only</sub>
+      </td>
+    </tr>
+  </table>
+</div>
 
 
 
