@@ -57,6 +57,20 @@ $$
 
 **Note:** expects `S MA` (magnitude, angle in degrees). For `S DB` or `S RI`, extend the parsing and convert accordingly.
 
+# smith_chart.py
+
+
+<p align="center">
+<img src="smith_chart_ex1.png" alt="示例图片" width="400">
+</p>
+<p align="center">
+<img src="smith_chart_ex2.png" alt="示例图片" width="600">
+</p>
+<p align="center">
+<img src="smith_chart_ex3.png" alt="示例图片" width="600">
+</p>
+
+
 
 
 
