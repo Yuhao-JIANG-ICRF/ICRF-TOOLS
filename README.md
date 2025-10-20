@@ -11,6 +11,13 @@ Several simple code for ICRF
 <a id="module-overview"></a>
 # Module overview
 
+| Module | Purpose | Key API |
+|---|---|---|
+| ICRF_parameters.py | Provide physical constants for all tools | constants |
+| Res_Freq.py | Resonance frequency vs radius; plots + values | compute f(R), plot |
+| Load.py | Read Touchstone, build complex S-matrices | fun_load_touchstone(path) |
+| smith_chart.py | Plot Smith chart and S loci | smith_Smatrix(S, num, display_mode) |
+
 
 <a id="sec-icrf_parameters"></a>
 # ICRF_parameters.py
