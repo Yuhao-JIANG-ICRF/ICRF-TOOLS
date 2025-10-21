@@ -21,17 +21,32 @@ Several simple code for ICRF
 
 <a id="sec-icrf_parameters"></a>
 # ICRF_parameters.py
-This file contains several important constants that are widely used in the code. Please download it before using other codes. It contains:  
-```python
-c  = 299792458          #Light speed [m/s]  
-e0 = 8.854187817e-12    #Vacuum Permittivity [F/m]  
-u0 = 4*np.pi*1e-7     #Permeability of vacuum [H/m]  
-q0 = 1.60217733e-19;    #Elementary positive charge [C]  
-m0 = 1.6726231e-27;     #Atomic mass unit [kg]  
-```
+**What’s inside**  
+All constants are namespaced in the ``Const`` class and written with readable numeric underscores. A helper method ``show_all()`` prints every constant and its value.
+
+| Name    | Meaning                         | Unit | Notes                     |
+|---------|---------------------------------|------|---------------------------|
+| **c**       | Speed of light in vacuum        | m/s  | 299 792 458               |
+| **e0**      | Vacuum permittivity             | F/m  | 8.854 187 817×10⁻¹²       |
+| **u0**      | Vacuum permeability             | H/m  | 4·π·10⁻⁷                  |
+| **q0**      | Elementary charge               | C    | 1.602 177 33×10⁻¹⁹        |
+| **m0**      | Proton mass                     | kg   | 1.672 623 1×10⁻²⁷         |
+| **k_B**     | Boltzmann constant              | J/K  | 1.38×10⁻²³                |
+| **eV_to_J** | Electron-volt to joule          | J/eV | 1.602×10⁻¹⁹               |
+
 ## Usage
 ```python
-from ICRF_parameters import c, e0, u0,q0, m0
+from ICRF_parameters import Const
+
+# access constants
+c = Const.c
+q0 = Const.q0
+
+# convert 3 keV to joule
+E_J = 3e3 * Const.eV_to_J
+
+# list all constants
+Const.show_all()
 ```
 
 <a id="sec-res_freq"></a>
@@ -140,7 +155,7 @@ The function returns a matplotlib.figure.Figure with a white background; axes ar
 
 Clone or copy the repo locally, ensure load/fun_load_touchstone.py is available, and prepare your Touchstone file (e.g., input/example/smatrix_aug-like.s4p).
 
-Example 1: demonstrate the three display modes
+**Example 1**: demonstrate the three display modes
 
 ```python
 import numpy as np
@@ -176,7 +191,7 @@ plt.show()
   </table>
 </div>
 
-Example 2: read `S11(f)` from `.s4p` and plot a “polyline + end arrow” locus
+**Example 2**: read `S11(f)` from `.s4p` and plot a “polyline + end arrow” locus
 
 ```python
 import numpy as np
