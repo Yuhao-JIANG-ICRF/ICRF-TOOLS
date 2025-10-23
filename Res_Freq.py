@@ -6,8 +6,8 @@ Created on Fri Feb 28 16:54:55 2025
 @author: Lara HIJAZI
 """
 ### cleaning in spyder
-get_ipython().magic('reset -f')
-get_ipython().magic('clear')
+#get_ipython().magic('reset -f')
+#get_ipython().magic('clear')
 ###
 globals().clear()
 import numpy as np
@@ -16,46 +16,57 @@ from ICRF_parameters import Const
 
 plt.close('all')     #close all figures
 
-# Constants
+import matplotlib as mpl
+mpl.rcParams.update({
+    'image.cmap':     'viridis',   #viridis,plasma,inferno,magma,cividis
+    'font.size': 16,         # base font size for text
+    'axes.titlesize': 16,    # title font size
+    'axes.labelsize': 20,    # x/y label font size
+    'xtick.labelsize': 16,   # x-axis tick label size
+    'ytick.labelsize': 16,   # y-axis tick label size
+    'legend.fontsize': 16,
+    'figure.titlesize':15,
+    'contour.linewidth': 2,
+    'xtick.direction':'in',
+    'ytick.direction':'in',
+    'xtick.top':True,
+    'xtick.bottom':True,
+    'ytick.left':True,
+    'ytick.right':True
+})
 
-# =============================================================================
-# #west
-# RB0 = 2.5;     #position of axis [m]
-# R0 = 2.5;      #major radius [m]
-# a  = 0.5;      #minor radius [m]
-# B0 = 3.657;     #magnetic field [T]
-# =============================================================================
+# Setup
 
-# jet
-RB0 = 2.96;     #position of axis [m]
-R0 = 2.96;      #major radius [m]
-a  = 0.96;      #minor radius [m]
-B0 = 3.7;#3.7&3.4     #magnetic field [T]
-# CFEDR
-RB0 = 8.25;     #position of axis [m]
-R0 = 7.8;      #major radius [m]
-a  = 2.5;      #minor radius [m]
-B0 = 6.3;#3.7&3.4     #magnetic field [T]
+# -------- Machine selector --------
+machine = "CFEDR"   # "WEST", "JET", or "CFEDR"
+N = 2  # harmonic number
 
-N = 2        # Harmonic number
 
-# Define range of R values (from R0-a to R0+a) 
-R = np.linspace(R0-a, R0+a, 200)
-if not np.isclose(R, R0).any():
-    R = np.sort(np.append(R, R0))
-    indices = np.where(R == R0)[0]
-    
-RB0_value = globals().get('RB0', None)
-if RB0_value is not None and RB0_value != R0 and not np.isclose(R, RB0_value).any():
-    R = np.sort(np.append(R, RB0_value))
-    indices = np.where(R == RB0_value)[0]
-    
+
+# --- Device geometry & magnetic field ---
+#RB0 (m) magnetic-axis major radius (R_axis; plasma axis after Shafranov shift)
+#R0  (m) geometric major radius (R_geo)
+#a   (m) minor radius of the plasma cross-section
+#B0  (T) toroidal magnetic field evaluated at R = R0
+
+if machine == "WEST":
+    RB0, R0, a, B0 = 2.5, 2.5, 0.5, 3.657
+elif machine == "JET":
+    RB0, R0, a, B0 = 2.96, 2.96, 0.96, 3.7
+elif machine == "CFEDR":
+    RB0, R0, a, B0 = 8.25, 7.8, 2.5, 6.3
+else:
+    raise ValueError("Unknown machine")
+
+
+
+# Radius grid
+R = np.linspace(R0 - a, R0 + a, 200)
+
     
 # Define the resonance frequency function
 def resonance_frequency(Z, A):
     return  N* 1/(2*np.pi*1e6) * (Z * Const.q0)/(A * Const.m0) * (B0*R0) / R# MHz
-
-
 
 # Compute f for different species
 f_H = resonance_frequency(Z=1, A=1)   # Hydrogen (H)
@@ -66,18 +77,7 @@ f_Li = resonance_frequency(Z=3, A=7)  # Lithium (Li)
 
 # Create the plot
 plt.figure(figsize=(7, 5))
-plt.rcParams.update({
-    'lines.linewidth':2,
-    'xtick.direction':'in',
-    'ytick.direction':'in',
-    'xtick.top':True,
-    'xtick.bottom':True,
-    'ytick.left':True,
-    'ytick.right':True,
-    'axes.grid':True, 
-    'grid.linestyle': '--',  
-    'grid.alpha': 0.6  
-    })
+
 plt.plot(R, f_H, label="H")
 plt.plot(R, f_D, label="D")
 plt.plot(R, f_T, label="T")
@@ -85,42 +85,37 @@ plt.plot(R, f_He, label="$^3$He")
 plt.plot(R, f_Li, label="$^7$Li")
 
 
-YL = plt.ylim()
-if RB0_value is not None:
-    plt.plot([RB0_value, RB0_value],[YL[0], YL[1]],'k--' ,label="Magnetic Axis")
-    outline = f'At magnetic axis = {RB0_value} [m],'
-else:
-    plt.plot([R0, R0],[YL[0], YL[1]],'k--' ,label="Major Radius")
-    outline = f'At major radius = {R0} [m],'
+# Reference position & label
+use_axis = not np.isclose(RB0, R0)
+ref_pos  = RB0 if use_axis else R0
+plt.axvline(ref_pos, linestyle='--', color='k',
+            label=("Magnetic Axis" if use_axis else "Major Radius"))
 
+plt.xlim(R0 - a, R0 + a)
+plt.xlabel("Resonance Position (m)")
+plt.ylabel("ICRF Frequency (MHz)")
 
-plt.xlim([R0-a, R0+a])
-plt.ylim([YL[0], YL[1]])
-# Labels and title
-plt.xlabel("Resonance Position [m]", fontsize=12)
-plt.ylabel("ICRF Frequency [MHz]", fontsize=12)
-if N==1:
-    plt.title("Fundamental Frequency vs Resonance Position", fontsize=14)
-    outline = outline + '\n\n Fundamental resonance frequency:'
-elif N==2:
-    plt.title("Second Harmonic Frequency vs Resonance Position", fontsize=14)
-    outline = outline + '\n\n second harmonic resonance frequency:'
+harmonic_str = "Fundamental" if N == 1 else "Second Harmonic"
+plt.title(f"{machine}\n{harmonic_str} Frequency vs Resonance Position")
 
-# Formatting grid and legend
-plt.legend(fontsize=11)
-
-# Show plot
+plt.legend(fontsize=13)
 plt.show()
-plt.plot(R, f_D, label="D")
-plt.plot(R, f_T, label="T")
-plt.plot(R, f_He, label="$^3$He")
-plt.plot(R, f_Li, label="$^7$Li")
 
-print(f'''
-      {outline}
-      H   = {f_H[indices].item():.1f} [MHz]
-      D   = {f_D[indices].item():.1f} [MHz]
-      T   = {f_T[indices].item():.1f} [MHz]
-      He3 = {f_He[indices].item():.1f} [MHz]
-      Li7 = {f_Li[indices].item():.1f} [MHz]
-      ''')
+# Safe index via closest point (no equality assumptions)
+idx_ref = int(np.argmin(np.abs(R - ref_pos)))
+
+outline = (f"At magnetic axis = {ref_pos:.2f} (m),"
+           if use_axis else
+           f"At major radius = {ref_pos:.2f} (m),")
+which_harm = "Fundamental" if N == 1 else "Second harmonic"
+
+print(f"""
+{outline}
+
+{which_harm} resonance frequency:
+H   = {f_H[idx_ref]:.1f} (MHz)
+D   = {f_D[idx_ref]:.1f} (MHz)
+T   = {f_T[idx_ref]:.1f} (MHz)
+He3 = {f_He[idx_ref]:.1f} (MHz)
+Li7 = {f_Li[idx_ref]:.1f} (MHz)
+""")
