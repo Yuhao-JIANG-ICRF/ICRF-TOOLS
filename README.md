@@ -8,6 +8,9 @@ Several simple code for ICRF
 - [3. Load.py](#sec-load)
 - [4. smith_chart.py](#sec-smith_chart)
 - [5. Tail_energy.py](#sec-Tail_energy)
+- [6. Critical_energy.py](#sec-Critical_energy)
+- [7. dispersion_relationship.py](#sec-dispersion_relationship)
+
 
 <a id="module-overview"></a>
 # Module overview
@@ -18,6 +21,8 @@ Several simple code for ICRF
 | Res_Freq.py | Resonance frequency vs radius; plots + values | compute f(R), plot |
 | Load.py | Read Touchstone, build complex S-matrices | fun_load_touchstone(path) |
 | smith_chart.py | Plot Smith chart and S loci | smith_Smatrix(S, num, display_mode) |
+| Tail_energy.py | 
+| Critical_energy.py |
 
 
 <a id="sec-icrf_parameters"></a>
@@ -222,3 +227,22 @@ If your Touchstone frequency unit is not hertz (e.g., MHz), convert fre as neede
 
 <a id="sec-Tail_energy"></a>
 # Tail_energy.py
+
+
+<p align="center">
+<img src="images/Tail_energy_ex1.png" alt="示例图片" width="400">
+</p>
+
+
+
+<a id="sec-Critical_energy"></a>
+# Critical_energy.py
+
+
+<p align="center">
+<img src="images/Power_redistribution_ex1.png" alt="示例图片" width="400">
+</p>
+
+
+<a id="sec-dispersion_relationship"></a>
+# dispersion_relationship.py
