@@ -7,6 +7,7 @@ Several simple code for ICRF
 - [2. Res_Freq.py](#sec-res_freq)
 - [3. Load.py](#sec-load)
 - [4. smith_chart.py](#sec-smith_chart)
+- [5. Tail_energy.py](#sec-Tail_energy)
 
 <a id="module-overview"></a>
 # Module overview
@@ -208,9 +209,16 @@ fig = smith_Smatrix(S11, 1, display_mode='line_with_arrow')
 fig.savefig('smith_S11_track.png', dpi=300, bbox_inches='tight')
 plt.show()
 ```
+<p align="center">
+<img src="images/smith_chart_ex4.png" alt="示例图片" width="400">
+</p>
+
 If your Touchstone frequency unit is not hertz (e.g., MHz), convert fre as needed. The Smith plot uses only the complex S-parameter, so the frequency unit does not affect the plot itself, but labeling figures with correct units improves readability.
 
 ## Tips
 - Smith charts are most commonly used for reflection/impedance analysis; use `S11` or `S22` as inputs.
 - If your data are given as magnitude and phase in degrees, convert to complex first; if your reader returns complex values already, pass them directly.
 - The chart confines resistance/reactance families to the unit circle and adds compact annotations for typical resistance/reactance values.
+
+<a id="sec-Tail_energy"></a>
+# Tail_energy.py
