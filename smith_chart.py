@@ -193,7 +193,7 @@ if __name__ == "__main__":
     
     smith_Smatrix(S, 3, display_mode='points_only')
     # %% data file
-    pre = 'input/example/'
+    pre = 'example/'
     fname = 'smatrix_aug-like.s4p'
     fre_unit = 'Hz'
     # %% read data
